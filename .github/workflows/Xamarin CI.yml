@@ -1,11 +1,11 @@
-name: CI on Push and Pull Request
+name: Xamarin CI
 
 on: 
   push
 
 jobs:
   Android:
-    runs-on: macos-latest 
+    runs-on: ubuntu-latest 
     steps:
     - uses: actions/checkout@v1
       
