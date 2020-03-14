@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AB3D296C-5392-45C1-9C78-8E10AEBB6659}</ProjectGuid>
+    <ProjectGuid>{8DDC6E15-4701-4C97-9B20-432A609CF5D7}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{6968b3a4-1835-46a3-ac5c-1ae33b475983}</TemplateGuid>
     <OutputType>Library</OutputType>
@@ -89,7 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LockApp\LockApp.csproj">
-      <Project>{8EC562A2-B605-495B-902D-EE40245DFBE1}</Project>
+      <Project>{347029E1-4172-497C-B8D1-DF7D7AD508F3}</Project>
       <Name>LockApp</Name>
     </ProjectReference>
   </ItemGroup>
