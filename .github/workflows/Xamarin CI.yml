@@ -38,7 +38,7 @@ jobs:
         cd LockApp
         echo nuget restore
         ls
-        nuget.exe restore LockApp.sln
+        nuget restore
         echo look around 2
         ls
         cd LockApp
