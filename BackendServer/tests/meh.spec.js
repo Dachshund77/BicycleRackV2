@@ -11,6 +11,6 @@ describe("meh Ttests", () => {
     });
 
     it("should pass ", () =>{
-        chai.expect("test").to.eql("test");
+        chai.expect("test1").to.eql("test");
     });
 });
