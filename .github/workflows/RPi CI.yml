@@ -6,8 +6,8 @@ name: Python CI
 on:
   push:
     branches: 
-     master
-     development 
+     - master
+     - development 
 jobs:
   build:
 
