@@ -1,6 +1,7 @@
 name: CI on Push and Pull Request
 
-on: [push, pull_request]
+on: 
+  push
 
 jobs:
   build:
@@ -32,7 +33,15 @@ jobs:
       
     - name: Android
       run: |
-        cd LockApp/LockApp
-        nuget restore
+        echo Look around 1
+        ls
+        cd LockApp
+        echo nuget restore
+        ls
+        nuget.exe restore LockApp.sln
+        echo look around 2
+        ls
+        cd LockApp
+        echo look around 3
         cd LockApp.Android
-        msbuild WheresMyKombucha.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+        msbuild LockApp.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
