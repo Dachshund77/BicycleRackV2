@@ -4,50 +4,20 @@ on:
   push
 
 jobs:
-  build:
-
-    runs-on: macos-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
-    - name: Show what in there
-      run: |
-        ls
-    - name: Show what it's inside
-      run: |
-        cd ..
-        ls
   Android:
-
-    runs-on: macos-latest
-    
+    runs-on: macos-latest 
     steps:
-
     - uses: actions/checkout@v1
       
-    - name: Android
-      run: |
-        echo Look around 1
-        ls
+    - name: Android Build
+      run: |      
         cd LockApp
-        echo nuget restore
-        ls
         nuget restore
-        echo look around 2
-        ls
-        cd LockApp
-        echo look around 3
-        cd LockApp.Android
+        #cd LockApp
+        cd LockApp/LockApp.Android
         msbuild LockApp.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
-        cd ..
-        cd ..
-        cd LockApp.Test
-        echo making test run
+    - name: NUnit tets  
+      run: |
         ls 
+        cd LockApp/LockApp.Tests
         dotnet test LockApp.Tests.csproj
