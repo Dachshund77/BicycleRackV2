@@ -1,0 +1,23 @@
+name: Xamarin CI
+
+on: 
+  push
+
+jobs:
+  Android:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Android Build
+      run: |      
+        cd LockApp
+        nuget restore
+        #cd LockApp
+        cd LockApp/LockApp.Android
+        msbuild LockApp.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+    - name: NUnit tests  
+      run: |
+        ls 
+        cd LockApp/LockApp.Tests
+        dotnet test LockApp.Tests.csproj
