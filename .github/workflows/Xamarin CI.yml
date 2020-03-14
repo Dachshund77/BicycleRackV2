@@ -32,7 +32,7 @@ jobs:
       
     - name: Android
       run: |
-        cd WheresMyKombucha
+        cd LockApp/LockApp
         nuget restore
-        cd WheresMyKombucha.Android
+        cd LockApp.Android
         msbuild WheresMyKombucha.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
