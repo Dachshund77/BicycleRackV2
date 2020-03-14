@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "node server.js",
-    "test": "mocha tests --recursiv"
+    "test": "mocha ./ --recursiv"
   },
   "author": "",
   "license": "ISC",
