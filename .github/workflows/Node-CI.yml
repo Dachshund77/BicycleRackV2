@@ -34,7 +34,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-    - name: Code coverage 
+    #- name: Code coverage 
     - uses: actions/checkout@master
     - uses: codecov/codecov-action@v1
       with:
