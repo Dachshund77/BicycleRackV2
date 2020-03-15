@@ -11,9 +11,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
@@ -32,3 +30,19 @@ jobs:
       working-directory: BackendServer
       env:
         CI: true
+  
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Code coverage 
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        file: ./coverage.xml # optional
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        fail_ci_if_error: true # optional (default = false)
+  
+        
+     
