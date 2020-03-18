@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="XaLockApp5.Views.RegistrationView"
+             xmlns:baseViewModel="clr-namespace:XaLockApp5.ViewModels;assembly=XaLockApp5"
+             baseViewModel:ViewModelLocator.AutoWireViewModel="true"
+             Title="Registration"
+              >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Grid.Column="1" Grid.Row="0">
+            <Label Text="Registration Page" FontSize="25" TextColor="Black" HorizontalOptions="Center"/>
+        </StackLayout>
+
+        <StackLayout Grid.Column="1" Grid.Row="1">
+            <Entry x:Name="FullName" Placeholder="Full Name" Text="{Binding FullName}"/>
+            <Entry Placeholder="Email"/>
+            <Entry Placeholder="Address"/>
+            <Entry Placeholder="City"/>
+            <Entry Placeholder="Zipcode"/>
+            <Entry Placeholder="Phone"/>
+            <Entry Placeholder="Password" IsPassword="True"/>
+        </StackLayout>
+        <StackLayout Grid.Row="5" Grid.Column="1">
+            <Button Text="Register" TextColor="Black" Command="{Binding Register}"/>
+            <Button Text="Go Back" TextColor="Black" Command="{Binding GoBack}"/>
+        </StackLayout>
+
+    </Grid>
+</ContentPage>

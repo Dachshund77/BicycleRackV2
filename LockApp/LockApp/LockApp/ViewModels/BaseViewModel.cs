@@ -1,56 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-using Xamarin.Forms;
-
-using LockApp.Models;
-using LockApp.Services;
+using System.Text;
+using System.Threading.Tasks;
+using XaLockApp.Services;
+using Xamarin.Forms.Maps;
 
 namespace LockApp.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged
+   public abstract class BaseViewModel
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        protected readonly INavigationService NavigationService;
 
-        bool isBusy = false;
-        public bool IsBusy
+        protected readonly Map GeneralMap;
+
+        internal static string UserName = "";
+        // prøv at indsætte protected Map her og brug det i gps og lock views
+
+
+        public BaseViewModel()
         {
-            get { return isBusy; }
-            set { SetProperty(ref isBusy, value); }
-        }
+            NavigationService = ViewModelLocator.Resolve<INavigationService>();
+            var settingsService = ViewModelLocator.Resolve<ISettingsService>();
 
-        string title = string.Empty;
-        public string Title
+
+        }
+        public virtual Task InitializeAsync(object navigationData)
         {
-            get { return title; }
-            set { SetProperty(ref title, value); }
+            return Task.FromResult(false);
         }
-
-        protected bool SetProperty<T>(ref T backingStore, T value,
-            [CallerMemberName]string propertyName = "",
-            Action onChanged = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value))
-                return false;
-
-            backingStore = value;
-            onChanged?.Invoke();
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            var changed = PropertyChanged;
-            if (changed == null)
-                return;
-
-            changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }
