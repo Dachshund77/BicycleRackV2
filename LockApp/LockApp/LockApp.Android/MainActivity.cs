@@ -14,6 +14,7 @@ namespace LockApp.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
