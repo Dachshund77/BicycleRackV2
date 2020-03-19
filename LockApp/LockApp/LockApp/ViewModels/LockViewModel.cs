@@ -19,10 +19,8 @@ namespace LockApp.ViewModels
                 return;
             isBusy = true;
 
-            // TODO insert code for Locking 
-
-            // register place where ít is locked. 
-
+             
+            // gets current location 
             var locator = CrossGeolocator.Current;
             locator.DesiredAccuracy = 1;
             var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(0.01));
@@ -31,15 +29,17 @@ namespace LockApp.ViewModels
             var longitude = position.Longitude;
 
             var pin = new Pin()
-            {
+            {   
+                /* 54,10 is hust to show another place than you current location, but 54 is going to be
+                 replced with latitude and 10 with logitude*/ 
+          
                 Position = new Position(54, 10),
-                Label = "Locked Bike"
+                Label  = "Locked Bike"
+                
             };
-            // doesnt work it doesnt add pin to the map
-            //(Application.Current as App).GeneralMap.Pins.Add(pin);
-            //map.Pins.Add(pin);
+           // adds pin to app shared observable list
             (Application.Current as App).MyPins.Add(pin);
-
+            
             isBusy = false;
         });
 
