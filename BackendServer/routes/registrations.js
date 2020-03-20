@@ -1,37 +1,42 @@
 var expres = require('express');
 var router = expres.Router();
+var monngose
 var user = require('../models/user');
 
 //Standard registration
 router.route('/')
     .post(function (request, response) {
-        console.log('start post');
         try {
             //Init values
             var newUser = new user(request.body);
 
-            //model validation, code 400 bas request
+            //model validation
             var validationError = newUser.validateSync();
             if (validationError) {
                 response.status(400).json(validationError);
                 return;
-            }
-            console.log('after validation');
+            }       
 
-            //Insert in db, 500 on error
+            //Insert in DB
             newUser.save(function (dbError) {
-                if (dbError) {
+                if(dbError.code === 11000){
+                    //name is already in db
+                    response.status(409).json(dbError);
+                    return;
+                }
+                else if (dbError) {        
+                    //catch all clasue
                     response.status(500).json(dbError);
                     return;
                 }
                 else {
+                    //success
                     response.status(201).json(newUser);
                     return;
                 }
             });
-
-            //Response created 201
         } catch (err) {
+            //Shit hit the fan somehow
             response.status(500).json('Internal server error');
         }    
     });

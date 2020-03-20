@@ -22,7 +22,8 @@ server.use(bodyParser.json());
 //Change that if needed
 mongose.connect('mongodb://localhost:27017/bikeDB', {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex : true
 });
 
 // ******* //
