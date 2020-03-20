@@ -3,7 +3,7 @@
 // ******* //
 
 var express = require('express');
-//const mongose = require('mongoose')
+var mongose = require('mongoose')
 var bodyParser = require('body-parser')
 
 // ***** //
@@ -19,11 +19,20 @@ server.use(bodyParser.json());
 // Database //
 // ******** //
 
+//Change that if needed
+mongose.connect('mongodb://localhost:27017/bikeDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
 // ******* //
 // Routing //
 // ******* //
 
 var router = express.Router()
+
+var registrationsRoute = require('./routes/registrations.js');
+server.use('/registrations', registrationsRoute);
 
 //Router init
 router.use(function (request, response, next) {
@@ -34,7 +43,7 @@ router.use(function (request, response, next) {
 server.use('/', router); //Landing
 
 router.route('/*').get(function (request, response) {
-    response.status(404).json('Shit went tits up!');
+    response.status(404).json('Route not found!'); //Generic error 
 });
 
 // *********** //

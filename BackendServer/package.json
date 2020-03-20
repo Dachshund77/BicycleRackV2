@@ -14,7 +14,9 @@
     "codecov": "^3.6.5",
     "express": "^4.17.1",
     "istanbul": "^0.4.5",
+    "migrate-mongoose": "^4.0.0",
     "minimist": "^1.2.2",
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "mongoose": "^5.9.5"
   }
 }
