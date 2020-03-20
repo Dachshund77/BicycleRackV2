@@ -5,12 +5,14 @@
 var express = require('express');
 var mongose = require('mongoose')
 var bodyParser = require('body-parser')
+var cors = require('cors')
 
 // ***** //
 // Setup //
 // ***** //
 
 var server = express();
+server.use(cors());
 var urlCode = bodyParser.urlencoded({ extended: true });
 server.use(express.static('public'));
 server.use(bodyParser.json());

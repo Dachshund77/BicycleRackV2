@@ -1,6 +1,5 @@
 var expres = require('express');
 var router = expres.Router();
-var monngose
 var user = require('../models/user');
 
 //Standard registration
