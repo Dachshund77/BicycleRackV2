@@ -1,6 +1,6 @@
 var expres = require('express');
 var router = expres.Router();
-var user = require('../models/user');
+var User = require('../models/user');
 var bcrypt = require('bcrypt');
 
 //Standard registration
@@ -8,7 +8,7 @@ router.route('/')
     .post(function (request, response) {
         try {
             //Init values
-            var newUser = new user(request.body);
+            var newUser = new User(request.body);
 
             //model validation
             var validationError = newUser.validateSync();
@@ -18,8 +18,11 @@ router.route('/')
             }
 
             //assigning salt            
-            var genSalt = bcrypt.genSaltSync(40);
+            var genSalt = bcrypt.genSaltSync(10);
+            console.log('generated salt '+genSalt);
+            
             newUser.salt = genSalt;
+            newUser.password = bcrypt.hashSync(newUser.password,genSalt);
 
             //Insert in DB
             newUser.save(function (dbError) {
@@ -43,6 +46,8 @@ router.route('/')
             });
         } catch (err) {
             //Shit hit the fan somehow
+            console.log(err);
+            
             response.status(500).json('Internal server error');
         }
     });

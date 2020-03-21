@@ -3,61 +3,50 @@ var bcrypt = require('bcrypt');
 var config = require('../configs/config')
 var expres = require('express');
 var router = expres.Router();
-//var user = require('../models/user');
+var User = require('../models/user');
 
 //User login (Assigning of token) as standard way
-router.route('/') //TODO fix this copy pasted code
-    .post(function (request, response) {
+router.route('/')
+    .post(async function (request, response) {
         try {
-            //Init values
-            bcrypt.genSalt()
-            //validate model
-            
-            //decrypt
+            //Init values 
+            var clientUser = new User(request.body);
 
-            //find in db
-
-
-
-
-
-
-
-
-//OOOOOOOOOLD STUFF
-
-            //Init values
-            var newUser = new user(request.body);
-
-            //model validation
-            var validationError = newUser.validateSync();
+            //model validation                      
+            var validationError = clientUser.validateSync();
             if (validationError) {
+                //Invalid user
                 response.status(400).json(validationError);
                 return;
-            }       
+            }
 
-            //Insert in DB
-            newUser.save(function (dbError) {
-                if(dbError.code === 11000){
-                    //name is already in db
-                    response.status(409).json(dbError);
-                    return;
-                }
-                else if (dbError) {        
-                    //catch all clasue
-                    response.status(500).json(dbError);
-                    return;
-                }
-                else {
-                    //success
-                    response.status(201).json(newUser);
-                    return;
-                }
-            });
+            //find user in db to get salt
+            var dbUser = await User.findOne({ name: clientUser.name })            
+            if (dbUser == null) {
+                //User not found in db
+                response.status(404).json(clientUser);
+                return;
+            }
+            
+            //Comparing                    
+            var isCorrect = bcrypt.compareSync(clientUser.password , dbUser.password);
+
+            if (isCorrect) {
+                //Assign token (Password does not need to go in the toke?)
+                var token = jwt.sign({ name: clientUser.name }, config.secret, { expiresIn: 60 })
+                //Return token
+                response.status(200).json(token);
+                return;
+            } else {
+                response.status(401).json(clientUser);
+                return;
+            }
+
         } catch (err) {
             //Shit hit the fan somehow
+            console.log(err);
             response.status(500).json('Internal server error');
-        }    
+        }
     });
 
 module.exports = router;
