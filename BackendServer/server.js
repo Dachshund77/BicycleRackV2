@@ -40,6 +40,9 @@ server.use('/registrations', registrationsRoute);
 var loginsRoute = require('./routes/logins.js');
 server.use('/logins', loginsRoute);
 
+var usersRoute = require('./routes/users.js');
+server.use('/users', usersRoute);
+
 //Router init
 router.use(function (request, response, next) {
     console.log('Recieved request, processing..')
