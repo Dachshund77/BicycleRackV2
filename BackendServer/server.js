@@ -37,6 +37,9 @@ var router = express.Router()
 var registrationsRoute = require('./routes/registrations.js');
 server.use('/registrations', registrationsRoute);
 
+var loginsRoute = require('./routes/logins.js');
+server.use('/logins', loginsRoute);
+
 //Router init
 router.use(function (request, response, next) {
     console.log('Recieved request, processing..')

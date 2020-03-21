@@ -7,6 +7,9 @@ var userSchema = new schema({
         unique: true,
         required: true
     },
+    salt: {
+        type : String
+    },
     password:{
         type: String,
         required: true
