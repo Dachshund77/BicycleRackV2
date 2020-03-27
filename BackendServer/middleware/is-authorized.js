@@ -34,18 +34,17 @@ var middleware =
                 }
 
                 //Test if Owner or authorized ealier
-                if (typeof res.locals.authorized === 'undefined') {
+                if (typeof res.locals.recordOwner === 'undefined' || res.locals.recordOwner == false) {
                     //Test against allowed roles
                     userRole = dbUser.role;
                     allowedRoles.forEach(element => {
                         if (element == userRole) {
                             isAllowed = true;
-                            res.locals.authorized = true;
                         }
                     });
                 } else {
                     //Use chached value
-                    isAllowed = res.locals.authorized;
+                    isAllowed = true;
                 }
 
                 //Decide further actions

@@ -7,21 +7,51 @@ var config = require('../configs/config');
 var isAutenticated = require('../middleware/is-autenticated');
 var isAuthorized = require('../middleware/is-authorized');
 var isValidModel = require('../middleware/is-valid-model');
-var isRecOwner = require('../middleware/is-rec-owner-users');
+var authoriseOwner = require('../middleware/authorise-owner-user');
 
 //Update a User
 router.put('/', [
     isAutenticated,
-    isRecOwner,
-    isAuthorized(['Admin', 'Owner']),
+    authoriseOwner,
+    isAuthorized(['Admin']),
     isValidModel(User)
 ]);
 router.route('/')
     .put(async function (req, res) {
         try {
+            //init 
+            var clientUser = req.body;
+
+            //fetch from db
+            var dbUser;
+            if (typeof res.locals.dbUserChache === 'undefined') {
+                dbUser = await User.findOne({ name: req.body.name })
+                if (dbUser == null) {
+                    //User not found in db
+                    res.status(404).json(dbUser);
+                    return;
+                }
+                res.locals.dbUserChache = dbUser;
+            } else {
+                dbUser = res.locals.dbUserChache;
+            }
+
+            //NEVER allow users to rewrite their role
+            if (dbUser.role == 'User') {
+                clientUser.role = 'User';
+            }
 
             //Update in db
-            res.status(200).json(result); //Result is not defined
+            var updatedUser = await User.findOneAndUpdate({ name: clientUser.name }, req.body, { new: true })
+            if (updatedUser == null) {
+                //User not found in db
+                res.status(404).json(updatedUser);
+                return;
+            }
+
+            //respond
+            res.status(200).json(updatedUser);
+
         } catch (err) {
             //Shit hit the fan somehow
             console.log(err);
@@ -29,6 +59,13 @@ router.route('/')
         }
     });
 
+//Delete users by ID
+router.delete('/', [
+    isAutenticated,
+    authoriseOwner,
+    isAuthorized(['Admin']),
+    isValidModel(User)
+]);
 router.route('/:name')
     .delete(function (request, response) {
         response.status(501);

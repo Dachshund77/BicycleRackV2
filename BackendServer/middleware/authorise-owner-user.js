@@ -9,8 +9,6 @@ var middleware =
                 next();
                 return;
             }
-            console.log(req.body)
-            console.log('TEST 3 '+ req.body.name);
             //get dbUser from DB and chache it into response
             var dbUser;
             if (typeof res.locals.dbUserChache === 'undefined') {
@@ -28,9 +26,7 @@ var middleware =
             //set flags if username and request name match
             //tbh kinda retarded check but this is proof of conecept i guess.
             if(req.body.name == dbUser.name){
-                console.log('TEST 1 '+ req.body.name);
-                console.log('TEST 2 '+ dbUser.name);
-                res.locals.authorized = true;
+                res.locals.recordOwner = true;
             }
 
             //react 
