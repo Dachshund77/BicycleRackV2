@@ -4,6 +4,7 @@ var config = require('../configs/config')
 var expres = require('express');
 var router = expres.Router();
 var User = require('../models/user');
+var isValidModel = require('../middleware/is-valid-model');
 
 //User login (Assigning of token) as standard way
 router.post('/', [

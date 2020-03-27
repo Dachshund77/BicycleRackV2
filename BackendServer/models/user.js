@@ -17,8 +17,6 @@ var userSchema = new schema({
     },
     password:{
         type: String,
-        minlength: 3,
-        maxlength: 32,
         required: true
     },
 });
