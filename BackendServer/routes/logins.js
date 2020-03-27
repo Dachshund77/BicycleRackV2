@@ -6,21 +6,16 @@ var router = expres.Router();
 var User = require('../models/user');
 
 //User login (Assigning of token) as standard way
+router.post('/', [
+    isValidModel(User)
+]);
 router.route('/')
     .post(async function (req, res) {
         try {
             //Init values 
             var clientUser = new User(req.body);
-            
-            //model validation                      
-            var validationError = clientUser.validateSync();
-            if (validationError) {
-                //Invalid user
-                res.status(400).json(validationError);
-                return;
-            }
-
-            //find user in db to get salt
+                      
+            //find user 
             var dbUser = await User.findOne({ name: clientUser.name })            
             if (dbUser == null) {
                 //User not found in db

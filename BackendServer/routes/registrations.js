@@ -2,29 +2,20 @@ var expres = require('express');
 var router = expres.Router();
 var User = require('../models/user');
 var bcrypt = require('bcrypt');
-//var middleware = require('../middleware/is-autenticated')
+var isValidModel = require('../middleware/is-valid-model');
 
 //Standard registration
-//router.post('/', [middleware]);
+router.post('/', [
+    isValidModel(User)
+]);
 router.route('/')
     .post(function (req, res) {
         try {
             //Init values
             var newUser = new User(req.body);
 
-            //model validation
-            var validationError = newUser.validateSync();
-            if (validationError) {
-                res.status(400).json(validationError);
-                return;
-            }
-
-            //assigning salt            
-            var genSalt = bcrypt.genSaltSync(10);
-            console.log('generated salt ' + genSalt);
-
-            newUser.salt = genSalt;
-            newUser.password = bcrypt.hashSync(newUser.password, genSalt);
+            //generate password
+            newUser.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
 
             //Insert in DB
             newUser.save(function (dbError) {
@@ -49,19 +40,6 @@ router.route('/')
         } catch (err) {
             //Shit hit the fan somehow
             console.log(err);
-
-            res.status(500).json('Internal server error');
-        }
-    });
-
-router.route('/')
-    .get(function (req, res) {
-        try {
-            res.status(200).json('WEIRDNESS!');
-        } catch (err) {
-            //Shit hit the fan somehow
-            console.log(err);
-
             res.status(500).json('Internal server error');
         }
     });

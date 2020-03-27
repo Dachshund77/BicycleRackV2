@@ -23,6 +23,7 @@ var middleware =
             });
         }
         catch (err) {
+            console.log(err);
             res.status(500).json('Internal server error');
         }
     };
