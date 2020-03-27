@@ -29,12 +29,12 @@ router.route('/')
 
             if (isCorrect) {
                 //Assign token (Password does not need to go in the toke?)
-                var token = jwt.sign({ name: clientUser.name }, config.secret, { expiresIn: 300 })
+                var token = jwt.sign({ name: clientUser.name }, config.secret, { expiresIn: 300000000 })
                 //Return token
                 res.status(200).json(token);
                 return;
             } else {
-                res.status(401).json(clientUser);
+                res.status(401).json(dbUser);
                 return;
             }
 

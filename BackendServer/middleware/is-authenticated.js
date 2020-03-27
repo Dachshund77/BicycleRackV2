@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken');
 
 var middleware =
     function (req, res, next) {
-        try {
+        try {           
             //init 
             const key = config.secret;
 

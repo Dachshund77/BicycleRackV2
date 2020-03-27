@@ -4,45 +4,45 @@ var User = require('../models/user');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var config = require('../configs/config');
-var isAutenticated = require('../middleware/is-autenticated');
+var isAutenticated = require('../middleware/is-authenticated');
 var isAuthorized = require('../middleware/is-authorized');
 var isValidModel = require('../middleware/is-valid-model');
-var authoriseOwner = require('../middleware/authorise-owner-user');
+var authoriseOwnerUsers = require('../middleware/authorise-owner-user');
 
 //Update a User
-router.put('/', [
+router.put('/:name', [
     isAutenticated,
-    authoriseOwner,
+    authoriseOwnerUsers,
     isAuthorized(['Admin']),
     isValidModel(User)
 ]);
-router.route('/')
+router.route('/:name')
     .put(async function (req, res) {
         try {
             //init 
             var clientUser = req.body;
+            console.log('req.params.name ' + req.params.name);
 
             //fetch from db
             var dbUser;
-            if (typeof res.locals.dbUserChache === 'undefined') {
-                dbUser = await User.findOne({ name: req.body.name })
-                if (dbUser == null) {
-                    //User not found in db
-                    res.status(404).json(dbUser);
-                    return;
-                }
-                res.locals.dbUserChache = dbUser;
-            } else {
-                dbUser = res.locals.dbUserChache;
+            dbUser = await User.findOne({ name: req.params.name });
+            if (dbUser === null) {
+                //User not found in db
+                res.status(404).json(dbUser);
+                return;
             }
 
+            console.log(dbUser.get('role'));
+
             //NEVER allow users to rewrite their role
-            if (dbUser.role == 'User') {
+            if (dbUser.get('role') == 'User') {
                 clientUser.role = 'User';
             }
 
+            //TODO THIS route bricks the password, need a fix mb redirect
+
             //Update in db
-            var updatedUser = await User.findOneAndUpdate({ name: clientUser.name }, req.body, { new: true })
+            var updatedUser = await User.findOneAndUpdate({ name: req.params.name }, req.body, { new: true })
             if (updatedUser == null) {
                 //User not found in db
                 res.status(404).json(updatedUser);
@@ -60,26 +60,86 @@ router.route('/')
     });
 
 //Delete users by ID
-router.delete('/', [
+router.delete('/:name', [
     isAutenticated,
-    authoriseOwner,
+    authoriseOwnerUsers,
     isAuthorized(['Admin']),
     isValidModel(User)
 ]);
 router.route('/:name')
-    .delete(function (request, response) {
-        response.status(501);
-        return;
+    .delete(async function (req, res) {
+        try {
+            //init        
+
+            //delete
+            var deletedUser = await User.findOneAndDelete({ name: req.params.name });
+            if (deletedUser === null) {
+                //User not found in db
+                res.status(404).json(req.body);
+                return;
+            }
+
+            //send response 
+            res.status(200).json(deletedUser);
+
+        } catch (err) {
+            //Shit hit the fan somehow
+            console.log(err);
+            res.status(500).json('Internal server error');
+        }
     });
 
+//get singe route
+router.get('/:name', [
+    isAutenticated,
+    authoriseOwnerUsers,
+    isAuthorized(['Admin']),
+    isValidModel(User)
+]);
 router.route('/:name')
-    .get(function (request, response) {
-        response.status(501);
-        return;
+    .get(async function (req, res) {
+        try {    
+
+            //delete
+            var foundUser = await User.findOne({ name: req.params.name });
+            if (foundUser === null) {
+                //User not found in db
+                res.status(404).json(req.body);
+                return;
+            }
+
+            //send response 
+            res.status(200).json(foundUser);
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json('Internal server error');
+        }
     });
 
-router.route('/:name?') //filtering with a lot of parameters?
-    .get(function (request, response) {
+//Get all route 
+//get singe route
+router.get('/', [
+    isAutenticated,
+    isAuthorized(['Admin']),
+    isValidModel(User)
+]);
+router.route('/') //get all
+    .get(async function (req, res) {
+         //get all
+         var foundUser = await User.find();
+         if (foundUser === null) {
+             //User not found in db
+             res.status(404).json(req.body);
+             return;
+         }
+
+         //send response 
+         res.status(200).json(foundUser);
+    });
+
+    router.route('/fdsafafsaf') //dynamic filtering???
+    .get(function (req, res) {
         response.status(501);
         return;
     });

@@ -1,35 +1,26 @@
 var User = require('../models/user');
+var jwt = require('jsonwebtoken');
 
 var middleware =
-    async function (req, res, next) {
+    function (req, res, next) {
         try {
-            //Get owner name
-            if(typeof req.body.name === 'undefined'){
-                //cant resolve this middleware without name
-                next();
-                return;
-            }
-            //get dbUser from DB and chache it into response
-            var dbUser;
-            if (typeof res.locals.dbUserChache === 'undefined') {
-                dbUser = await User.findOne({ name: req.body.name })
-                if (dbUser == null) {
-                    //User not found in db
-                    res.status(404).json(dbUser);
-                    return;
-                }
-                res.locals.dbUserChache = dbUser;
-            } else {
-                dbUser = res.locals.dbUserChache;
-            }
+            //get payload
+            var headerAuth = req.headers.authorization;
+            var array = headerAuth.split(' ');
+            var token = array[1];
+            var decoded = jwt.decode(token);
+            var validName = decoded.name;
 
-            //set flags if username and request name match
-            //tbh kinda retarded check but this is proof of conecept i guess.
-            if(req.body.name == dbUser.name){
+            //Get username from url
+            var userName = req.params.name
+
+            //compate with the provided paramter
+            if (validName == userName) {
                 res.locals.recordOwner = true;
+            } else {
+                res.locals.recordOwner = false;
             }
 
-            //react 
             next();
 
         } catch (err) {
