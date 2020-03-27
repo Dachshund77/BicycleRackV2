@@ -1,29 +1,17 @@
 var expres = require('express');
 var router = expres.Router();
 var User = require('../models/user');
-
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var config = require('../configs/config')
+var isAutenticated = require('../middleware/is-autenticated')
 
 //Update a User
+router.put('/', [isAutenticated]);
 router.route('/')
-    .put(async function (request, response) {
+    .put(async function (req, res) {
         try {
-            //Init 
-            //var test1 = request.header.authorization;
-            var auth = request.headers.authorization;
-            //split away beared, need middle war for that 
-            var array = auth.split(' ');
-            var token = array[1];
-
-            var key = config.secret;
-            console.log("token " + token);
-            console.log("key " + key);
-            var result = jwt.verify(token, key)//Why the fuck do i even hav the salt stored in the db
-            console.log("result " + result);
-            console.log(result['name']);
-            //result['name'];
+            
             //Require authentication
 
             //Require Authorisation
@@ -31,11 +19,11 @@ router.route('/')
             //Validate model
 
             //Update in db
-            response.status(200).json(result);
+            res.status(200).json(result);
         } catch (err) {
             //Shit hit the fan somehow
             console.log(err);
-            response.status(500).json('Internal server error');
+            res.status(500).json('Internal server error');
         }
     });
 

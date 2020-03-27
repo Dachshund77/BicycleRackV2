@@ -32,6 +32,13 @@ mongose.connect('mongodb://localhost:27017/bikeDB', {
 // Routing //
 // ******* //
 
+
+/**
+ * IMPORTANT, most middleware is configured and initalised by a case by case basis
+ * This was done in order to keep code readability high
+ * Only global middleware that uses every route should be configured here
+ */
+//Route init 
 var router = express.Router()
 
 var registrationsRoute = require('./routes/registrations.js');
@@ -44,14 +51,18 @@ var usersRoute = require('./routes/users.js');
 server.use('/users', usersRoute);
 
 //Router init
-router.use(function (request, response, next) {
+router.use(function (request, response, next) { //This is actuallya logger now that i think about it
     console.log('Recieved request, processing..')
     next();
 });
 
+//Global middleware
+//TODO REFACTOR THIS PART HERE
+
+
 server.use('/', router); //Landing
 
-router.route('/*').get(function (request, response) {
+router.route('/*').get(function (request, response) { //ERROR: This middleware only works for get 
     response.status(404).json('Route not found!'); //Generic error 
 });
 
