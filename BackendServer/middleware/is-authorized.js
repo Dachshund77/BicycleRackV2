@@ -7,11 +7,9 @@ var middleware =
         return async function (req, res, next) {
             try {
                 //init 
-                const key = config.secret; //Shouldent we need that?
                 var isAllowed = false;
 
                 //get the token from the header 
-                //Does this work: request.headers['x-api-token'] ???
                 var headerAuth = req.headers.authorization;
                 var array = headerAuth.split(' ');
                 var token = array[1];
