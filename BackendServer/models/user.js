@@ -5,10 +5,15 @@ var userSchema = new schema({
     name:{
         type: String,
         unique: true,
+        minlength: 3,
+        maxlength: 32,
         required: true
     },
-    salt: {
-        type : String
+    role: {
+        type : String,
+        default : 'User',
+        enum : ['User','Admin'],
+        required: true
     },
     password:{
         type: String,

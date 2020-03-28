@@ -1,6 +1,6 @@
 let chai = require('chai');
 
-describe("meh Ttests", () => {
+describe("Server Ttests", () => {
 
     it("should pass ", () =>{
         chai.expect("test").to.eql("test");
