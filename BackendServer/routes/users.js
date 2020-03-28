@@ -61,10 +61,6 @@ router.put('/:name', [
 router.route('/:name')
     .put(async function (req, res) {
         try {
-            //init 
-            var clientUser = req.body;
-            console.log('req.params.name ' + req.params.name);
-
             //fetch from db
             var dbUser;
             dbUser = await User.findOne({ name: req.params.name });
@@ -74,14 +70,13 @@ router.route('/:name')
                 return;
             }
 
-            console.log(dbUser.get('role'));
-
             //NEVER allow users to rewrite their role
             if (dbUser.get('role') == 'User') {
-                clientUser.role = 'User';
+                req.body.role = 'User';
             }
 
-            //TODO THIS route bricks the password, need a fix mb redirect
+           //Update passowrd
+            req.body.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
 
             //Update in db
             var updatedUser = await User.findOneAndUpdate({ name: req.params.name }, req.body, { new: true })
