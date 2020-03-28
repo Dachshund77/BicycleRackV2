@@ -18,7 +18,7 @@ router.route('/')
             newUser.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
 
             //ALWAYS starts with the User role
-            newUser.set({ 'role': 'User' })
+            newUser.role = 'User'
 
             //Insert in DB
             newUser.save(function (dbError) {
