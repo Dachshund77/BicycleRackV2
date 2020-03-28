@@ -20,7 +20,6 @@ var middleware =
                 var decoded = jwt.decode(token);
 
                 //get dbUser from DB and chache it into res
-
                 var dbUser = await User.findOne({ name: decoded.name })
                 if (dbUser == null) {
                     //User not found in db
