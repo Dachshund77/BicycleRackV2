@@ -51,6 +51,9 @@ server.use('/logins', loginsRoute);
 var usersRoute = require('./routes/users.js');
 server.use('/users', usersRoute);
 
+var deviceRoute = require('./routes/devices.js');
+server.use('/devices', deviceRoute);
+
 
 //Router init
 /*
