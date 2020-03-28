@@ -25,13 +25,7 @@ var middleware =
 
                 //get dbUser from DB and chache it into res
                 var dbUser = await User.findOne({ name: decoded.name })
-                if (dbUser == null) {
-                    //User not found in db
-                    //403 cause authenication failed
-                    res.status(403).json(req.body);
-                    return;
-                }
-
+                
                 //Test against allowed roles
                 userRole = dbUser.role;
                 allowedRoles.forEach(element => {

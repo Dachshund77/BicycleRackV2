@@ -4,25 +4,26 @@ var User = require('../models/user');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var config = require('../configs/config');
-var isAutenticated = require('../middleware/is-authenticated');
-var isAuthorized = require('../middleware/is-authorized');
+var requireAuthentication = require('../middleware/auth/require-authentication');
+var authoriseUserWithRole = require('../middleware/users/authorise-user-with-role');
 var isValidModel = require('../middleware/is-valid-model');
-var authoriseOwnerUsers = require('../middleware/authorise-owner-user');
+var authoriseUserOwner = require('../middleware/users/authorise-user-owner');
+var requireAuthorisation = require('../middleware/auth/require-authorisation')
+var hashPassword = require('../middleware/auth/hash-password');
 
 //Admin post, unrestricted
 router.post('/:name', [
-    isAutenticated,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation,
+    isValidModel(User),
+    hashPassword
 ]);
 router.route('/:name')
     .post(async function (req, res) {
         try {
             //Init values
             var newUser = new User(req.body);
-
-            //generate password
-            newUser.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
 
             //Insert in DB
             newUser.save(function (dbError) {
@@ -53,10 +54,12 @@ router.route('/:name')
 
 //Update a User
 router.put('/:name', [
-    isAutenticated,
-    authoriseOwnerUsers,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserOwner,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation,
+    isValidModel(User),
+    hashPassword
 ]);
 router.route('/:name')
     .put(async function (req, res) {
@@ -74,9 +77,6 @@ router.route('/:name')
             if (dbUser.get('role') == 'User') {
                 req.body.role = 'User';
             }
-
-           //Update passowrd
-            req.body.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
 
             //Update in db
             var updatedUser = await User.findOneAndUpdate({ name: req.params.name }, req.body, { new: true })
@@ -98,16 +98,14 @@ router.route('/:name')
 
 //Delete users by ID
 router.delete('/:name', [
-    isAutenticated,
-    authoriseOwnerUsers,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserOwner,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation
 ]);
 router.route('/:name')
     .delete(async function (req, res) {
         try {
-            //init        
-
             //delete
             var deletedUser = await User.findOneAndDelete({ name: req.params.name });
             if (deletedUser === null) {
@@ -128,10 +126,10 @@ router.route('/:name')
 
 //get singe route
 router.get('/:name', [
-    isAutenticated,
-    authoriseOwnerUsers,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserOwner,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation
 ]);
 router.route('/:name')
     .get(async function (req, res) {
@@ -157,9 +155,9 @@ router.route('/:name')
 //Get all route 
 //get singe route
 router.get('/', [
-    isAutenticated,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation
 ]);
 router.route('/') //get all
     .get(async function (req, res) {

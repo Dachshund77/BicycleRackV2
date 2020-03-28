@@ -1,29 +1,28 @@
 var expres = require('express');
 var router = expres.Router();
 var Device = require('../models/device');
-var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var isAutenticated = require('../middleware/is-authenticated');
-var isAuthorized = require('../middleware/is-authorized');
+var requireAuthentication = require('../middleware/auth/require-authentication');
+var authoriseUserWithRole = require('../middleware/users/authorise-user-with-role');
 var isValidModel = require('../middleware/is-valid-model');
+var requireAuthorisation = require('../middleware/auth/require-authorisation');
+var setLastUpdated = require('../middleware/devices/set-last-updated');
+var hashPassword = require('../middleware/auth/hash-password');
 
 //post new device without restrictions
 router.post('/', [
-    isAutenticated,
-    isAuthorized(['Device','Admin']),
-    isValidModel(Device)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin']),
+    requireAuthorisation,
+    isValidModel(Device),
+    setLastUpdated,
+    hashPassword
 ]);
 router.route('/')
     .post(async function (req, res) {
         try {
             //Init values
             var newDevice = new Device(req.body);
-
-            //generate password
-            newDevice.password = bcrypt.hashSync(newDevice.password, bcrypt.genSaltSync(10));
-
-            //Set last update time
-            newDevice.lastUpdateReceived = Date.now();
 
             //Insert in DB
             newDevice.save(function (dbError) {
@@ -54,19 +53,15 @@ router.route('/')
 
 //Update a device 
 router.put('/:_id', [
-    isAutenticated,
-    isAuthorized(['Device','Admin']),
-    isValidModel(Device)
+    requireAuthentication,
+    authoriseUserWithRole(['Device','Admin']),
+    isValidModel(Device),
+    setLastUpdated,
+    hashPassword
 ]);
 router.route('/:_id')
     .put(async function (req, res) {
-        try {
-            //Rehash password
-            req.body.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync(10));
-
-            //Update date now
-            req.body.lastUpdateReceived = Date.now();
-
+        try {        
             //Update in db
             var updatedDevice = await User.findOneAndUpdate({ _id: req.params._id }, req.body, { new: true })
             if (updatedDevice == null) {
@@ -74,7 +69,6 @@ router.route('/:_id')
                 res.status(404).json(updatedDevice);
                 return;
             }
-
             //respond
             res.status(200).json(updatedDevice);
 
@@ -87,9 +81,8 @@ router.route('/:_id')
 
 //Delete a device by id 
 router.delete('/:_id', [
-    isAutenticated,
-    isAuthorized(['Admin']),
-    isValidModel(Device)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin'])
 ]);
 router.route('/:_id')
     .delete(async function (req, res) {
@@ -114,9 +107,8 @@ router.route('/:_id')
 
 //get a device by id
 router.get('/:_id', [
-    isAutenticated,
-    isAuthorized(['Admin']),
-    isValidModel(User)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin'])
 ]);
 router.route('/:_id')
     .get(async function (req, res) {
@@ -140,9 +132,8 @@ router.route('/:_id')
 
 //get all devices
 router.get('/', [
-    isAutenticated,
-    isAuthorized(['Admin']),
-    isValidModel(Device)
+    requireAuthentication,
+    authoriseUserWithRole(['Admin'])
 ]);
 router.route('/') //get all
     .get(async function (req, res) {
